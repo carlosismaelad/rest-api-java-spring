@@ -3,10 +3,14 @@ package br.com.rest.controllers;
 import br.com.rest.domain.product.Product;
 import br.com.rest.domain.product.ProductRepository;
 import br.com.rest.domain.product.RequestProduct;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.*;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -27,13 +31,27 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+//    @PutMapping
+//    public ResponseEntity updateProduct(@RequestBody @Valid RequestProduct data){
+//        Product existsProduct = repository.getReferenceById(data.id());
+//        existsProduct.setName(data.name());
+//        existsProduct.setPrice_in_cents(data.price_in_cents());
+//        Product updatedProduct = repository.save(existsProduct);
+//        return ResponseEntity.ok(updatedProduct);
+//    }
+
     @PutMapping
+    @Transactional
     public ResponseEntity updateProduct(@RequestBody @Valid RequestProduct data){
-        Product existsProduct = repository.getReferenceById(data.id());
-        existsProduct.setName(data.name());
-        existsProduct.setPrice_in_cents(data.price_in_cents());
-        Product updatedProduct = repository.save(existsProduct);
-        return ResponseEntity.ok(updatedProduct);
+        Optional<Product> optinalProduct = repository.findById(data.id());
+        if(optinalProduct.isPresent()){
+            Product product = optinalProduct.get();
+            product.setName(data.name());
+            product.setPrice_in_cents(data.price_in_cents());
+            return ResponseEntity.ok(product);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping
