@@ -31,6 +31,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+//    Usando getReferenceById no PUT
 //    @PutMapping
 //    public ResponseEntity updateProduct(@RequestBody @Valid RequestProduct data){
 //        Product existsProduct = repository.getReferenceById(data.id());
@@ -54,13 +55,22 @@ public class ProductController {
         }
     }
 
+//    Delete usando PathVariable
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity deleteProduct(@PathVariable String id){
+//        repository.deleteById(id);
+//        return ResponseEntity.noContent().build();
+//    }
+
     @DeleteMapping
     public ResponseEntity deleteProduct(@RequestBody @Valid RequestProduct data){
-        Product existsProduct = repository.getReferenceById(data.id());
-        repository.delete(existsProduct);
-        return ResponseEntity.noContent().build();
+        Optional<Product> existsProduct = repository.findById(data.id());
+        if(existsProduct.isPresent()){
+            repository.delete(existsProduct.get());
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.noContent().build();
+        }
     }
-
-
 
 }
