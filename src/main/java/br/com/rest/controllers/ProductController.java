@@ -20,7 +20,7 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity getAllProducts(){
-        var allProducts = repository.findAll();
+        var allProducts = repository.findAllByActiveTrue();
         return ResponseEntity.ok(allProducts);
     }
 
@@ -63,13 +63,15 @@ public class ProductController {
 //    }
 
     @DeleteMapping
+    @Transactional
     public ResponseEntity deleteProduct(@RequestBody @Valid RequestProduct data){
-        Optional<Product> existsProduct = repository.findById(data.id());
-        if(existsProduct.isPresent()){
-            repository.delete(existsProduct.get());
+        Optional<Product> optinalProduct = repository.findById(data.id());
+        if(optinalProduct.isPresent()){
+            Product product = optinalProduct.get();
+            product.setActive(false);
             return ResponseEntity.noContent().build();
         }else{
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
     }
 

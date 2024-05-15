@@ -2,4 +2,8 @@ package br.com.rest.domain.product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, String> {}
+import java.util.List;
+
+public interface ProductRepository extends JpaRepository<Product, String> {
+    List<Product> findAllByActiveTrue();
+}
