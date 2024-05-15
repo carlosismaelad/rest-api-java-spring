@@ -3,6 +3,8 @@ package br.com.rest.controllers;
 import br.com.rest.domain.product.Product;
 import br.com.rest.domain.product.ProductRepository;
 import br.com.rest.domain.product.RequestProduct;
+import br.com.rest.exception.RequestExceptionHandler;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,6 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-//    Usando getReferenceById no PUT
-//    @PutMapping
-//    public ResponseEntity updateProduct(@RequestBody @Valid RequestProduct data){
-//        Product existsProduct = repository.getReferenceById(data.id());
-//        existsProduct.setName(data.name());
-//        existsProduct.setPrice_in_cents(data.price_in_cents());
-//        Product updatedProduct = repository.save(existsProduct);
-//        return ResponseEntity.ok(updatedProduct);
-//    }
-
     @PutMapping
     @Transactional
     public ResponseEntity updateProduct(@RequestBody @Valid RequestProduct data){
@@ -51,16 +43,9 @@ public class ProductController {
             product.setPrice_in_cents(data.price_in_cents());
             return ResponseEntity.ok(product);
         }else{
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException();
         }
     }
-
-//    Delete usando PathVariable
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity deleteProduct(@PathVariable String id){
-//        repository.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
 
     @DeleteMapping
     @Transactional
@@ -71,7 +56,7 @@ public class ProductController {
             product.setActive(false);
             return ResponseEntity.noContent().build();
         }else{
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException();
         }
     }
 
